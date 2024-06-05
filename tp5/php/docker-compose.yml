@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  php:
+    image: apache
+    build:
+      context: ./docker
+    volumes:  
+      - ./src:/var/www/html
+    ports:
+      - "80:80"

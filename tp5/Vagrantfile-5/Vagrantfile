@@ -1,0 +1,41 @@
+servers=[
+      {
+        :hostname => "web1.tp5.b2",
+        :ip => "10.5.1.11",
+        :box => "generic/rocky9",
+        :ram => 1024,
+        :provision_scripts => ["../scripts/Update.sh","../scripts/config-firewall.sh","../scripts/hosts.sh","../scripts/Apache-php.sh"]
+        :synced_folder => {
+          :local_path => "C:\Users\quentin\tp-linux-b2\tp5\php",
+          :guest_path => "/home/vagrant"
+        }
+      },
+      {
+        :hostname => "rp1.tp5.b2",
+        :ip => "10.5.1.111",
+        :box => "generic/rocky9",
+        :ram => 1024,
+        :provision_scripts => ["../scripts/Update.sh","../scripts/config-firewall.sh","../scripts/hosts.sh","../scripts/Nginx.sh"]
+      },
+      {
+        :hostname => "db1.tp5.b2",
+        :ip => "10.5.1.211",
+        :box => "generic/rocky9",
+        :ram => 1024,
+        :provision_scripts => ["../scripts/Update.sh","../scripts/config-firewall.sh","../scripts/hosts.sh","../scripts/Mariadb.sh"]
+      }
+    ]
+
+Vagrant.configure(2) do |config|
+    servers.each do |machine|
+        config.vm.define machine[:hostname] do |node|
+            node.vm.box = machine[:box]
+            node.vm.hostname = machine[:hostname]
+            node.vm.network "private_network", ip: machine[:ip]
+            node.vm.provider "virtualbox" do |vb|
+                vb.customize ["modifyvm", :id, "--memory", machine[:ram]]
+            end
+            node.vm.provision "shell", inline: machine[:provision_scripts].join("\n")
+        end
+    end
+end

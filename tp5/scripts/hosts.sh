@@ -1,0 +1,1 @@
+echo -e "10.3.1.11 web1.tp5.b2\n10.3.1.12 rp1.tp5.b2" >> /etc/hosts
